@@ -1,0 +1,6 @@
+host: localhost
+port: 3306
+user: root
+password: Alex9429
+database: telegrambot
+token: 5763587128:AAGBn7fDoFz1KgnoLoQd6YDmWq0x2SsKr2g
