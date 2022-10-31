@@ -4,14 +4,13 @@ from multiprocessing import connection
 from sqlite3 import Timestamp
 from warnings import catch_warnings
 from datetime import datetime, date, time
-#from telebot import types
 import pymysql
 import telebot
 import yaml
 
 try:
     with open("Consts.yaml", "r") as yam:
-        consts = yaml.load(yam)
+        consts = yaml.safe_load(yam)
     
     connection = pymysql.connect(
         host=consts['host'],
@@ -58,4 +57,5 @@ try:
     bot.polling(none_stop=True, timeout=123)
 finally:
     connection.close()
+
 
