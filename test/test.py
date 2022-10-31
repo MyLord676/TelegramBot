@@ -7,14 +7,18 @@ from datetime import datetime, date, time
 #from telebot import types
 import pymysql
 import telebot
+import yaml
 
 try:
+    with open("Consts.yaml", "r") as yam:
+        consts = yaml.load(yam)
+    
     connection = pymysql.connect(
-        host="localhost",
-        port=3306,
-        user="root",
-        password="Alex9429",
-        database="telegrambot",
+        host=consts['host'],
+        port=consts['port'],
+        user=consts['user'],
+        password=consts['password'],
+        database=consts['database'],
         cursorclass=pymysql.cursors.DictCursor
     )
     print("Connected")
@@ -29,7 +33,7 @@ try:
     #        connection.commit()
     #except Error as e:
     #    print("e")
-    bot = telebot.TeleBot("5763587128:AAGBn7fDoFz1KgnoLoQd6YDmWq0x2SsKr2g")
+    bot = telebot.TeleBot(consts['token'])
     @bot.message_handler(content_types=['text'])
     def Request(message):
         bot.send_message(message.chat.id, message.text) 
@@ -40,7 +44,11 @@ try:
                 #print(message.date)
                 #print(datetime.now())
                 #print(formatted_date)
-                insert_query = "INSERT INTO requests2 (tg_id, timestamp, request_text) VALUES ({}, '{}', '{}');".format(message.chat.id, formatted_date, message.text)
+                insert_query = "INSERT INTO requests2 ("\
+                "tg_id,"\
+                "timestamp,"\
+                "request_text)"\
+                "VALUES ({}, '{}', '{}');".format(message.chat.id, formatted_date, message.text)
                 cursor.execute(insert_query)
                 connection.commit()
         except Error as e:
