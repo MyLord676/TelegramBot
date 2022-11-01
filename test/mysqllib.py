@@ -1,29 +1,35 @@
-import pymysql
 import myuser
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, TIMESTAMP, Text
+from sqlalchemy import insert
+from sqlalchemy import MetaData
+
+#meta = MetaData()
+#requests = Table(
+#   'requests', meta, 
+#   Column('id', Integer, primary_key = True), 
+#   Column('tg_id', Integer),
+#   Column('timestamp', TIMESTAMP), 
+#   Column('text', Text), 
+#)
+
 class mysqllib:
     def __init__(self, host, port, user, password, database):
-        self.myCon = pymysql.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=database,
-            cursorclass=pymysql.cursors.DictCursor
-        )
+        engine = create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(user, password, host, port,database))
+        self.myCon = engine.connect()
         print("Connected")
 
     def connectionClose(self):
         self.myCon.close()
 
-    def insertRequest(self, id, tg_id, timestamp, text):
-        with self.myCon.cursor() as cursor:
-            insert_query = "INSERT INTO requests ("\
-            "tg_id,"\
-            "ts,"\
-            "request_text)"\
-            "VALUES ('{}', '{}', '{}');".format(tg_id, timestamp, text)
-            cursor.execute(insert_query)
-            self.myCon.commit()
+    def insertRequest(self, tg_id, timestamp, text):
+        insert_query = "INSERT INTO requests ("\
+        "tg_id,"\
+        "ts,"\
+        "request_text) "\
+        "VALUES ('{}', '{}', '{}');".format(tg_id, timestamp, text)#.format(id, tg_id, timestamp, text)
+        print(insert_query)
+        self.myCon.execute(insert_query)
+
 
     def userInsert(self, user):
         with self.myCon.cursor() as cursor:
@@ -36,14 +42,14 @@ class mysqllib:
             self.myCon.commit()
 
     def userAuthorization(self, id):
-        with self.myCon.cursor() as cursor:
-            authorize_query = "SELECT TOP(1)"\
-            "FROM users"\
-            "WHERE tg_id = id"
-            cursor.execute(authorize_query)
-            id, create_dt, tg_id, username, descrtext, first_token = cursor.fetchone()
-            user = myuser.user(id, create_dt, tg_id, username, descrtext, first_token)
-            return user
+        authorize_query = "SELECT * "\
+        "FROM users "\
+        "WHERE tg_id = {} "\
+        "LIMIT 1".format(id)
+        print(authorize_query)
+        user = self.myCon.execute(authorize_query).fetchone()
+        print(user)
+        return user
 
     def createTableUsers(self):
         with self.myCon.cursor() as cursor:
