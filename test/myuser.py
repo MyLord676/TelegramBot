@@ -1,13 +1,6 @@
 from datetime import datetime
 
 class user:
-    id = 0
-    create_dt: datetime.now()
-    tg_id = 0
-    username = ""
-    descrtext = ""
-    first_token = ""
-    token_requests_count = 0
 
     def createUserFromList(self, arr):
         self.id = arr.id

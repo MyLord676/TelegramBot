@@ -24,7 +24,8 @@ class mysqllib:
         values(create_dt = user.create_dt,
                tg_id = user.tg_id,
                username = user.username,
-               descrtext = user.descrtext).where(self.users.columns.id == user.id)
+               descrtext = user.descrtext)\
+                   .where(self.users.columns.id == user.id)
         print("userAdd SQL:")
         print(query)
         self.myCon.execute(query)
@@ -61,7 +62,13 @@ class mysqllib:
             self.userAddTokenRequest(userWithToken)
             return False
         newUser = myuser.user()
-        newUser.createUser(userWithToken.id, user.create_dt, user.tg_id, user.username, user.descrtext, userWithToken.first_token, userWithToken.token_requests_count)
+        newUser.createUser(userWithToken.id, 
+                           user.create_dt, 
+                           user.tg_id, 
+                           user.username, 
+                           user.descrtext, 
+                           userWithToken.first_token,
+                           userWithToken.token_requests_count)
         return newUser
 
     def userAddTokenRequest(self, user):
