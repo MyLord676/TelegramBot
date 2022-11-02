@@ -1,5 +1,6 @@
 import myuser
 import sqlalchemy as db
+from secrets import token_hex
 
 class mysqllib:
     def __init__(self, host, port, user, password, database):
@@ -30,8 +31,8 @@ class mysqllib:
         print(query)
         self.myCon.execute(query)
 
-    def tokenInsert(self, first_token):
-        query = self.users.insert().values(first_token = first_token)
+    def addToken(self):
+        query = self.users.insert().values(first_token = token_hex(50))
         print("tokenInsert SQL:")
         print(query)
         self.myCon.execute(query)

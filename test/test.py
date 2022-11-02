@@ -3,9 +3,6 @@ import mysqllib
 import telebot
 import yaml
 import myuser
-import secrets
-
-#print(secrets.token_hex(50)) #tokengenerator
 
 try:
     with open("Consts.yaml", "r") as yam:
@@ -22,6 +19,7 @@ except Error (e):
 
 bot = telebot.TeleBot(consts['token'])
 
+#myBase.addToken()
 #myBase.createTableUsers()
 #myBase.createTableRequests()
 
