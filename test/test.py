@@ -5,6 +5,8 @@ import yaml
 import myuser
 import secrets
 
+#print(secrets.token_hex(50)) #tokengenerator
+
 try:
     with open("Consts.yaml", "r") as yam:
         consts = yaml.safe_load(yam)
