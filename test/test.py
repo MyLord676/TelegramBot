@@ -4,11 +4,6 @@ import mysqllib
 import telebot
 import yaml
 import myuser
-import mysqlalchemy
-
-#t = mysqlalchemy.conn.execute("SELECT * "\
-#    "FROM users").fetchall()
-#print(t)
 
 with open("Consts.yaml", "r") as yam:
     consts = yaml.safe_load(yam)
@@ -16,12 +11,13 @@ try:
     myBase = mysqllib.mysqllib(consts['host'], consts['port'], consts['user'], consts['password'], consts['database'])
     bot = telebot.TeleBot(consts['token'])
 
-    
+    myBase.createTableUsers()
+    myBase.createTableRequests()
 
     @bot.message_handler(content_types=['text'])
     def Request(message):
         formatted_date = datetime.utcfromtimestamp(int(message.date)).strftime('%Y-%m-%d %H:%M:%S')
-        print("UserId: {}, Date: {}, MessageText: {}.".format(message.chat.id, formatted_date, message.text))
+        print("Message Received: UserId: {}, Date: {}, MessageText: {}.".format(message.chat.id, formatted_date, message.text))
 
         #if myBase.userAuthorization() != myuser.user:
         #    return
