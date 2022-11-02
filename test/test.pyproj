@@ -22,7 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="mysqlalchemy.py" />
     <Compile Include="mysqllib.py" />
     <Compile Include="test.py" />
     <Compile Include="myuser.py" />
