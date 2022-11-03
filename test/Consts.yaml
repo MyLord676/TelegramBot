@@ -5,3 +5,4 @@ password: Alex9429
 database: telegrambot
 token: 5763587128:AAE9kdleVWQyJs2R1zoXuSKgxBkbD1PymGg
 max_token_request: 3
+notifyerLoopTime: 300
