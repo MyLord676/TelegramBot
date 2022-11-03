@@ -93,7 +93,8 @@ class mysqllib:
             session.rollback()
         finally:
             session.close()
-
+    
+    """Change notify.sended to 1"""
     def notifySended(self, arr):
         session = Session(self.engine)
         try:
