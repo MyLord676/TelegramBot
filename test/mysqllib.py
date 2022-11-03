@@ -84,18 +84,27 @@ class mysqllib:
         finally:
             session.close()
 
-    #def notifyGetAll(self):
-    #    session = Session(self.engine)
-    #    try:
-    #        notifications = session.query(domain.Notify).filter(domain.Notify.sended == 0)
-    #        for n in notifications:
-    #            n.sended = 1
-    #        session.commit()
-    #        return notifications
-    #    except:
-    #        session.rollback()
-    #    finally:
-    #        session.close()
+    def notifyGetAll(self):
+        session = Session(self.engine)
+        try:
+            notifications = session.query(domain.Notify).filter(domain.Notify.sended == 0).all()
+            return notifications
+        except:
+            session.rollback()
+        finally:
+            session.close()
+
+    def notifySended(self, arr):
+        session = Session(self.engine)
+        try:
+            for n in arr:
+                notifications = session.query(domain.Notify).get(n)
+                notifications.sended = 1
+                session.commit()
+        except:
+            session.rollback()
+        finally:
+            session.close()
 
     def createTableUsers(self):
         query = "CREATE TABLE `users` (id int AUTO_INCREMENT NOT NULL,"\

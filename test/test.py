@@ -59,13 +59,19 @@ def Request(message):
 
     bot.send_message(message.chat.id, message.text) 
 
-#def notifyEvery300second():
-#    threading.Timer(300, notifyEvery300second).start()
-#    notifications = myBase.notifyGetAll()
-#    for n in notifications:
-#        bot.send_message(n.tg_id, n.notify_text) 
-#    print("Notifications sent")
-
+def notifyEvery300second():
+    threading.Timer(300, notifyEvery300second).start()
+    notifications = myBase.notifyGetAll()
+    sended = []
+    for n in notifications:
+        try:
+            bot.send_message(n.tg_id, n.notify_text)
+            sended.append(n.id)
+        except:
+            print("not sent: {}".format(n.id))
+    print("Notifications sent")
+    myBase.notifySended(sended)
+    
 notifyEvery300second()
 
 bot.polling(none_stop=True, timeout=123)
