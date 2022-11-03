@@ -24,7 +24,6 @@
   <ItemGroup>
     <Compile Include="mysqllib.py" />
     <Compile Include="domain.py" />
-    <Compile Include="myThread.py" />
     <Compile Include="test.py" />
   </ItemGroup>
   <ItemGroup>
