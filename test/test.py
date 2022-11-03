@@ -1,8 +1,11 @@
+from ctypes.wintypes import INT
 from datetime import datetime
 import mysqllib
 import telebot
 import yaml
 import domain
+#
+import threading
 
 try:
     with open("Consts.yaml", "r") as yam:
@@ -56,6 +59,14 @@ def Request(message):
 
     bot.send_message(message.chat.id, message.text) 
 
+#def notifyEvery300second():
+#    threading.Timer(300, notifyEvery300second).start()
+#    notifications = myBase.notifyGetAll()
+#    for n in notifications:
+#        bot.send_message(n.tg_id, n.notify_text) 
+#    print("Notifications sent")
+
+notifyEvery300second()
 
 bot.polling(none_stop=True, timeout=123)
 
