@@ -1,84 +1,89 @@
-import myuser
+import domain
 import sqlalchemy as db
 from secrets import token_hex
+from sqlalchemy.orm import Session
 
 class mysqllib:
     def __init__(self, host, port, user, password, database):
-        engine = db.create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(user, password, host, port,database))
-        self.myCon = engine.connect()
+        self.engine = db.create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(user, password, host, port,database))
         self.meta = db.MetaData()
-        self.requests = db.Table('requests', self.meta, autoload=True, autoload_with=engine)
-        self.users = db.Table('users', self.meta, autoload=True, autoload_with=engine)
         print("Connected to mysql")
 
-    def connectionClose(self):
-        self.myCon.close()
+    """Insert request to database"""
+    def insertRequest(self, request: domain.Request):
+        session = Session(self.engine)
+        try:
+            session.add(request)
+            session.commit()
+            return request
+        except:
+            session.rollback()
+        finally:
+            session.close()
 
-    def insertRequest(self, tg_id, ts, request_text):
-        query = self.requests.insert().values(tg_id = tg_id, ts = ts, request_text = request_text)
-        print("insertRequest SQL:")
-        print(query)
-        self.myCon.execute(query)
-
-    def userAdd(self, user: myuser.user):
-        query = self.users.update().\
-        values(create_dt = user.create_dt,
-               tg_id = user.tg_id,
-               username = user.username,
-               descrtext = user.descrtext)\
-                   .where(self.users.columns.id == user.id)
-        print("userAdd SQL:")
-        print(query)
-        self.myCon.execute(query)
-
+    """Generate new token in database"""
     def addToken(self):
-        query = self.users.insert().values(first_token = token_hex(50))
-        print("tokenInsert SQL:")
-        print(query)
-        self.myCon.execute(query)
+        token = token_hex(50)
+        session = Session(self.engine)
+        try:
+            session.add(domain.User(first_token = token))
+            session.commit()
+            return token
+        except:
+            session.rollback()
+        finally:
+            session.close()
 
-    def userAuthorization(self, id):
-        query = db.select([self.users]).where(self.users.columns.tg_id == id).limit(1)
-        ResultProxy = self.myCon.execute(query)
-        ResultSet = ResultProxy.fetchall()
-        print("userAuthorization SQL:")
-        print(ResultSet)
-        if not ResultSet:
-            return False
-        user = myuser.user()
-        user.createUserFromList(ResultSet[0])
-        return user
+    """Check if id of users tg exists in database if exists: return user else: return False"""
+    def userAuthorization(self, tg_id):
+        session = Session(self.engine)
+        try:
+            user = session.query(domain.User).filter(domain.User.tg_id == tg_id).first()
+            if not user:
+                return False
+            return user
+        except:
+            print("exception in userAuthorization")
+        finally:
+            session.close()
 
-    def tokenCheck(self, user: myuser.user):
-        query = db.select([self.users]).where(self.users.columns.first_token == user.first_token).limit(1)
-        ResultProxy = self.myCon.execute(query)
-        ResultSet = ResultProxy.fetchall()
-        print("tokenCheck SQL:")
-        print(ResultSet)
-        if not ResultSet:
-            return False
-        userWithToken = myuser.user()
-        userWithToken.createUserFromList(ResultSet[0])
-        if userWithToken.tg_id != 0:
-            self.userAddTokenRequest(userWithToken)
-            return False
-        newUser = myuser.user()
-        newUser.createUser(userWithToken.id, 
-                           user.create_dt, 
-                           user.tg_id, 
-                           user.username, 
-                           user.descrtext, 
-                           userWithToken.first_token,
-                           userWithToken.token_requests_count)
-        return newUser
+    """Check if token exists in database and do not have connection with any account create new user and return him.
+    otherwise return false"""
+    def tokenCheck(self, user: domain.User):
+        session = Session(self.engine)
+        try:
+            userFromDb = session.query(domain.User).filter(domain.User.first_token == user.first_token).first()
 
-    def userAddTokenRequest(self, user):
-        query = self.users.update().\
-        values(token_requests_count = user.token_requests_count + 1).where(self.users.columns.id == user.id)
-        print("userAddTokenRequest SQL:")
-        print(query)
-        self.myCon.execute(query)
-        
+            if not userFromDb:
+                return False
+            if userFromDb.tg_id != 0:
+                userFromDb.token_requests_count = userFromDb.token_requests_count + 1
+                session.commit()
+                return False
+            userFromDb.create_dt = user.create_dt
+            userFromDb.tg_id = user.tg_id
+            userFromDb.username = user.username
+            userFromDb.descrtext = user.descrtext
+            userFromDb.token_requests_count = userFromDb.token_requests_count
+            session.commit()
+            return userFromDb
+        except:
+            session.rollback()
+        finally:
+            session.close()
+            
+    """add notify to database"""
+    def notifyAdd(self, notify:domain.Notify):
+        session = Session(self.engine)
+        try:
+            session.add(notify)
+            session.commit()
+            return notify
+        except:
+            session.rollback()
+        finally:
+            session.close()
+
     def createTableUsers(self):
         query = "CREATE TABLE `users` (id int AUTO_INCREMENT NOT NULL,"\
         "create_dt TIMESTAMP NOT NULL DEFAULT NOW(),"\
@@ -95,5 +100,13 @@ class mysqllib:
         "tg_id INT NOT NULL DEFAULT 0,"\
         "ts TIMESTAMP NOT NULL DEFAULT NOW(),"\
         "request_text TEXT,"\
+        "PRIMARY KEY(id))"
+        self.myCon.execute(query)
+
+    def createTableNotify(self):
+        query = "CREATE TABLE `notify` (id int AUTO_INCREMENT NOT NULL,"\
+        "tg_id INT NOT NULL DEFAULT 0,"\
+        "notify_text TEXT,"\
+        "sended SMALLINT NOT NULL DEFAULT 0,"\
         "PRIMARY KEY(id))"
         self.myCon.execute(query)

@@ -3,6 +3,7 @@ import mysqllib
 import telebot
 import yaml
 import myuser
+import domain
 
 try:
     with open("Consts.yaml", "r") as yam:
@@ -19,9 +20,16 @@ except Error (e):
 
 bot = telebot.TeleBot(consts['token'])
 
+#############################################################
 #myBase.addToken()
 #myBase.createTableUsers()
 #myBase.createTableRequests()
+#myBase.createTableNotify()
+#myBase.notifyAdd(domain.Notify(notify_text = "test2"))
+#print (myBase.addToken())
+#myBase.userAddTokenRequest(domain.User(id = 2, create_dt = '2022-11-02 12:33:00', tg_id = 1855954960, username = 'AlexEltc', descrtext = "test", token_requests_count = 0))
+#print(myBase.userAuthorization(1855954960).id)
+#############################################################
 
 @bot.message_handler(content_types=['text'])
 def Request(message):
@@ -31,25 +39,25 @@ def Request(message):
     try:    
         authorizedUser = myBase.userAuthorization(message.chat.id)
         if authorizedUser == False:
-            newUser = myuser.user()
-            newUser.createUser(0, formatted_date, message.chat.id, message.from_user.username, " ", message.text, 0)
-            newUser = myBase.tokenCheck(newUser)
+            newUser = myBase.tokenCheck(
+                domain.User(create_dt = formatted_date, 
+                            tg_id = message.chat.id, 
+                            username = message.from_user.username, 
+                            descrtext = "", first_token = message.text,)
+                )
             if newUser == False:
                 return
-            myBase.userAdd(newUser)
-            authorizedUser = newUser
         elif authorizedUser.token_requests_count >= consts['max_token_request']:
             return
     except Error(e):
         print("Authorization authentication error")
         print(e)
 
-    myBase.insertRequest(message.chat.id, formatted_date, message.text)
+    myBase.insertRequest(domain.Request(tg_id = message.chat.id,ts = formatted_date, request_text = message.text))
 
     bot.send_message(message.chat.id, message.text) 
 
 
 bot.polling(none_stop=True, timeout=123)
-myBase.connectionClose()
 
 
