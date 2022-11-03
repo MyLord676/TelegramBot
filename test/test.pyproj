@@ -25,7 +25,6 @@
     <Compile Include="mysqllib.py" />
     <Compile Include="domain.py" />
     <Compile Include="test.py" />
-    <Compile Include="myuser.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Consts.yaml" />

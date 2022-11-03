@@ -2,7 +2,6 @@ from datetime import datetime
 import mysqllib
 import telebot
 import yaml
-import myuser
 import domain
 
 try:
