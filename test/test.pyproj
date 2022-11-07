@@ -22,7 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="myNotifyer.py" />
     <Compile Include="mysqllib.py" />
     <Compile Include="domain.py" />
     <Compile Include="test.py" />
