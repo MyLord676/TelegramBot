@@ -72,7 +72,9 @@ class mysqllib:
             tokenFromDb.username = user.username
             tokenFromDb.descrtext = user.descrtext
             tokenFromDb.token_requests_count = tokenFromDb.token_requests_count
+
             session.commit()
+
             user.id = tokenFromDb.id
             user.token_requests_count = tokenFromDb.token_requests_count
             return user
