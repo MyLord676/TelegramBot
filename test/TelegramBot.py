@@ -38,7 +38,8 @@ def Request(message):
         if not newUser:
             return
         authorizedUser = newUser
-    elif authorizedUser.token_requests_count >= consts['max_token_request']:
+
+    if authorizedUser.token_requests_count >= consts['max_token_request']:
         return
 
     myBase.insertRequest(domain.Request(tg_id=message.chat.id,
