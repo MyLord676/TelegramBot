@@ -1,12 +1,11 @@
 import telebot
 import yaml
-import threading
 
 from datetime import datetime
 
 import mysqllib
 import domain
-
+import Notifyer
 
 try:
     with open("Consts.yaml", "r") as yam:
@@ -49,31 +48,7 @@ def Request(message):
     bot.send_message(message.chat.id, message.text)
 
 
-class Notifyer(object):
-    _timeBetweenNotify = consts['timeBetweenNotify']
-
-    def changeTime(self, time):
-        self._timeBetweenNotify = time
-
-    def startNotifyLoop(self):
-        threading.Timer(self._timeBetweenNotify, self.startNotifyLoop).start()
-        notifications = myBase.notifyGetAll()
-        if not notifications:
-            return
-
-        sended = []
-        for n in notifications:
-            try:
-                bot.send_message(n.tg_id, n.notify_text)
-                sended.append(n.id)
-            except Exception as e:
-                print("not sent: {}".format(n.id))
-                print(e)
-        print("Notifications sent")
-        myBase.notifySended(sended)
-
-
-notifyer = Notifyer()
+notifyer = Notifyer.Notifyer(consts['timeBetweenNotify'], bot, myBase)
 notifyer.startNotifyLoop()
 
 while True:
