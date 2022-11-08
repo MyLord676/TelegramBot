@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cc93b68d-4d81-45db-9e65-58bd225fed5c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test.py</StartupFile>
+    <StartupFile>TelegramBot.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,7 +25,7 @@
     <Compile Include="mysqllib.py" />
     <Compile Include="domain.py" />
     <Compile Include="Notifyer.py" />
-    <Compile Include="test.py" />
+    <Compile Include="TelegramBot.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Consts.yaml" />
