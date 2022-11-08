@@ -42,6 +42,8 @@ def Request(message):
     if authorizedUser.token_requests_count >= consts['max_token_request']:
         return
 
+    print(authorizedUser)
+
     myBase.insertRequest(domain.Request(tg_id=message.chat.id,
                                         ts=formatted_date,
                                         request_text=message.text))

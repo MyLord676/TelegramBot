@@ -13,6 +13,10 @@ class Notify(Base):
     notify_text = Column(Text)
     sended = Column(SmallInteger, nullable=False, default=0)
 
+    def __str__(self):
+        return "id: {}||tg_id: {}|| notify_text: {}|| sended: {}"\
+            .format(self.id, self.tg_id, self.notify_text, self.sended)
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -24,6 +28,12 @@ class User(Base):
     descrtext = Column(Text)
     first_token = Column(Text)
     token_requests_count = Column(Integer, nullable=False, default=0)
+
+    def __str__(self):
+        return "id: {}||tg_id: {}|| username: {}|| descrtext: {}||"\
+            "first_token: {}|| token_requests_count: {}|| create_dt: {}"\
+            .format(self.id, self.tg_id, self.username, self.descrtext,
+                    self.first_token, self.token_requests_count, self.create_dt)
 
     def exchangeFields(self, user):
         self.create_dt = user.create_dt
@@ -41,3 +51,7 @@ class Request(Base):
     tg_id = Column(Integer, nullable=False, default=0)
     ts = Column(TIMESTAMP, nullable=False, default=func.now())
     request_text = Column(Text)
+
+    def __str__(self):
+        return "id: {}||tg_id: {}|| request_text: {}|| ts: {}"\
+            .format(self.id, self.tg_id, self.request_text, self.ts)
