@@ -1,5 +1,6 @@
 import threading
 
+
 class Notifyer(object):
 
     def __init__(self, timeBetweenNotify, bot, base):
