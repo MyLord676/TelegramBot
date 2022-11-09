@@ -21,7 +21,6 @@ def main():
 
     bot = telebot.TeleBot(consts['token'])
 
-
     @bot.message_handler(content_types=['text'])
     def Request(message):
         formatted_date = datetime.utcfromtimestamp(int(message.date))\
@@ -52,7 +51,6 @@ def main():
 
         bot.send_message(message.chat.id, message.text)
 
-
     notifyer = Notifyer.Notifyer(consts['timeBetweenNotify'], bot, myBase)
     notifyer.startNotifyLoop()
 
@@ -61,6 +59,7 @@ def main():
             bot.polling(none_stop=True, timeout=10)
         except Exception as e:
             print(e)
+
 
 if __name__ == '__main__':
     main()
