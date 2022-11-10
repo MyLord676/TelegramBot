@@ -1,0 +1,73 @@
+from django.core.management.base import BaseCommand
+from django.conf import settings
+
+from telegramBot.models import Users, Notify, Requests
+
+import telebot
+
+from datetime import datetime
+
+
+def AuthorizeUser(tg_id):
+    users = Users.objects.filter(tg_id=tg_id)[:1]
+    if not users:
+        return False
+    return users[0]
+
+def CheckToken(token):
+    token = Users.objects.filter(first_token=token)[:1]
+    if not token:
+        return False
+    if token[0].tg_id != 0:
+        return False
+    return token[0]
+
+def main():
+
+    bot = telebot.TeleBot(settings.TOKEN)
+
+    @bot.message_handler(content_types=['text'])
+    def Request(message):
+        formatted_date = datetime.utcfromtimestamp(int(message.date))\
+            .strftime('%Y-%m-%d %H:%M:%S')
+        print("Message Received: UserId: {}, Date: {}, MessageText: {}."
+              .format(message.chat.id, formatted_date, message.text))
+
+        user = AuthorizeUser(message.chat.id)
+        if not user:
+            print("not user")
+            freeToken = CheckToken(message.text)
+            if not freeToken:
+                print("not freeToken")
+                return
+            freeToken.create_dt = formatted_date
+            freeToken.tg_id = message.chat.id
+            freeToken.descrtext = ""
+            freeToken.username = message.from_user.username
+            freeToken.save()
+            user = freeToken
+        if user.token_requests_count >= settings.MAX_TOKEN_REQUEST:
+            print("not token_requests_count")
+            return
+
+        print(user)
+
+        Requests(tg_id=message.chat.id,
+                 ts=formatted_date,
+                 request_text=message.text).save()
+
+        bot.send_message(message.chat.id, message.text)
+
+    """notifyer = Notifyer.Notifyer(consts['timeBetweenNotify'], bot, myBase)
+    notifyer.startNotifyLoop()"""
+
+    print("TelegramBot started")
+
+    bot.infinity_polling()
+
+
+class Command(BaseCommand):
+    help = "Telegram bot start"
+
+    def handle(self, *args, **options):
+        main()

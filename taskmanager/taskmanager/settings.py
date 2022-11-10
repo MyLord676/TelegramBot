@@ -136,3 +136,12 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Telegram bot
+
+TOKEN = '5763587128:AAE9kdleVWQyJs2R1zoXuSKgxBkbD1PymGg'
+
+MAX_TOKEN_REQUEST = 3
+
+TIME_BETWEEN_NOTIFY = 300
