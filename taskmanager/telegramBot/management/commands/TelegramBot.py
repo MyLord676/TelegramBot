@@ -1,11 +1,13 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from telegramBot.models import Users, Notify, Requests
+from telegramBot.models import Users, Requests
 
 import telebot
 
 from datetime import datetime
+
+from .Notifyer import Notifyer
 
 
 def AuthorizeUser(tg_id):
@@ -58,12 +60,14 @@ def main():
 
         bot.send_message(message.chat.id, message.text)
 
-    """notifyer = Notifyer.Notifyer(consts['timeBetweenNotify'], bot, myBase)
-    notifyer.startNotifyLoop()"""
+
+    notifyer = Notifyer(settings.TIME_BETWEEN_NOTIFY, bot)
+    notifyer.startNotifyLoop()
 
     print("TelegramBot started")
 
     bot.infinity_polling()
+    notifyer.stopLoop()
 
 
 class Command(BaseCommand):
