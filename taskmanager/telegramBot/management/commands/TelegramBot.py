@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from telegramBot.models import Users, Requests
+from telegramBot.models import AuthUser, Requests
 
 import telebot
 
@@ -11,14 +11,14 @@ from .Notifyer import Notifyer
 
 
 def AuthorizeUser(tg_id):
-    users = Users.objects.filter(tg_id=tg_id)[:1]
+    users = AuthUser.objects.filter(tg_id=tg_id)[:1]
     if not users:
         return False
     return users[0]
 
 
 def CheckToken(token):
-    token = Users.objects.filter(first_token=token)[:1]
+    token = AuthUser.objects.filter(first_token=token)[:1]
     if not token:
         return False
     if token[0].tg_id != 0:
@@ -39,10 +39,10 @@ def main():
 
         user = AuthorizeUser(message.chat.id)
         if not user:
-            print("not user")
+            print("not AuthorizeUser")
             freeToken = CheckToken(message.text)
             if not freeToken:
-                print("not freeToken")
+                print("not valid token")
                 return
             freeToken.create_dt = formatted_date
             freeToken.tg_id = message.chat.id
@@ -51,7 +51,7 @@ def main():
             freeToken.save()
             user = freeToken
         if user.token_requests_count >= settings.MAX_TOKEN_REQUEST:
-            print("not token_requests_count")
+            print("token_requests_count >= {}".format(settings.MAX_TOKEN_REQUEST))
             return
 
         print(user)
