@@ -1,6 +1,7 @@
 import threading
 from telegramBot.models import Notify
 
+
 class Notifyer(object):
     stopLoop = True
 
@@ -16,13 +17,12 @@ class Notifyer(object):
 
     def startNotifyLoop(self):
         if not self.stopLoop:
-            print("not self.cont")
+            print("Notify ends")
             return
-        print("threading.Timer")
         threading.Timer(self._timeBetweenNotify, self.startNotifyLoop).start()
         notifications = Notify.objects.filter(sended=0)
         if not notifications:
-            print("no notific")
+            print("no notifications")
             return
 
         for n in notifications:
@@ -30,8 +30,8 @@ class Notifyer(object):
                 self.bot.send_message(n.tg_id, n.notify_text)
                 n.sended += 1
                 n.save()
-                print("send")
+                print("send: {}".format(n))
             except Exception as e:
-                print("not sent: {}".format(n.id))
+                print("not sent: {}".format(n))
                 print(e)
         print("Notifications sent")

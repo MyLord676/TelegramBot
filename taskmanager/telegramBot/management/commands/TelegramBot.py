@@ -16,6 +16,7 @@ def AuthorizeUser(tg_id):
         return False
     return users[0]
 
+
 def CheckToken(token):
     token = Users.objects.filter(first_token=token)[:1]
     if not token:
@@ -23,6 +24,7 @@ def CheckToken(token):
     if token[0].tg_id != 0:
         return False
     return token[0]
+
 
 def main():
 
@@ -60,7 +62,6 @@ def main():
 
         bot.send_message(message.chat.id, message.text)
 
-
     notifyer = Notifyer(settings.TIME_BETWEEN_NOTIFY, bot)
     notifyer.startNotifyLoop()
 
@@ -75,3 +76,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         main()
+
+
+
