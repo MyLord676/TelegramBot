@@ -44,7 +44,7 @@ def main():
             if not freeToken:
                 print("not valid token")
                 return
-            freeToken.create_dt = formatted_date
+            freeToken.date_joined = formatted_date
             freeToken.tg_id = message.chat.id
             freeToken.descrtext = ""
             freeToken.username = message.from_user.username
