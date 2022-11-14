@@ -13,8 +13,10 @@ from .models import DjangoSession
 
 @admin.register(AuthUser)
 class AuthUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'tg_id', 'username',
-                    'descrtext', 'first_token', 'token_requests_count')
+    list_display = ('id', 'tg_id', 'password', 'token_requests_count', 'last_login',
+                    'is_superuser','username', 'first_name', 'last_name', 'email',
+                    'is_staff', 'is_active', 'date_joined','descrtext', 
+                    'first_token')
 
 
 @admin.register(Requests)
