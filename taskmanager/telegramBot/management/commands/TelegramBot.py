@@ -27,6 +27,7 @@ def CheckToken(token):
         return False
     return token[0]
 
+
 def AuthorizeUser(message, date):
     user = TryToFindUser(message.chat.id)
     if not user:
@@ -45,6 +46,7 @@ def AuthorizeUser(message, date):
         print("token_requests_count >= {}".format(settings.MAX_TOKEN_REQUEST))
         return False
     return user
+
 
 def main():
 
