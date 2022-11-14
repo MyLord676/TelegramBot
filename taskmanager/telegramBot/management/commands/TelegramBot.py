@@ -10,7 +10,7 @@ from datetime import datetime
 from .Notifyer import Notifyer
 
 
-def AuthorizeUser(tg_id):
+def TryToFindUser(tg_id):
     users = AuthUser.objects.filter(tg_id=tg_id)[:1]
     if not users:
         return False
@@ -27,6 +27,24 @@ def CheckToken(token):
         return False
     return token[0]
 
+def AuthorizeUser(message, date):
+    user = TryToFindUser(message.chat.id)
+    if not user:
+        print("not AuthorizeUser")
+        freeToken = CheckToken(message.text)
+        if not freeToken:
+            print("not valid token")
+            return False
+        freeToken.date_joined = date
+        freeToken.tg_id = message.chat.id
+        freeToken.descrtext = ""
+        freeToken.username = message.from_user.username
+        freeToken.save()
+        user = freeToken
+    if user.token_requests_count >= settings.MAX_TOKEN_REQUEST:
+        print("token_requests_count >= {}".format(settings.MAX_TOKEN_REQUEST))
+        return False
+    return user
 
 def main():
 
@@ -39,21 +57,8 @@ def main():
         print("Message Received: UserId: {}, Date: {}, MessageText: {}."
               .format(message.chat.id, formatted_date, message.text))
 
-        user = AuthorizeUser(message.chat.id)
+        user = AuthorizeUser(message, formatted_date)
         if not user:
-            print("not AuthorizeUser")
-            freeToken = CheckToken(message.text)
-            if not freeToken:
-                print("not valid token")
-                return
-            freeToken.date_joined = formatted_date
-            freeToken.tg_id = message.chat.id
-            freeToken.descrtext = ""
-            freeToken.username = message.from_user.username
-            freeToken.save()
-            user = freeToken
-        if user.token_requests_count >= settings.MAX_TOKEN_REQUEST:
-            print("token_requests_count >= {}".format(settings.MAX_TOKEN_REQUEST))
             return
 
         print(user)
@@ -63,6 +68,7 @@ def main():
                  request_text=message.text).save()
 
         bot.send_message(message.chat.id, message.text)
+
 
     notifyer = Notifyer(settings.TIME_BETWEEN_NOTIFY, bot)
     notifyer.startNotifyLoop()

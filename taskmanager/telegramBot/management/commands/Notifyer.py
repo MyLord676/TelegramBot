@@ -28,7 +28,7 @@ class Notifyer(object):
         for n in notifications:
             try:
                 self.bot.send_message(n.tg_id, n.notify_text)
-                n.sended += 1
+                n.sended = 1
                 n.save()
                 print("send: {}".format(n))
             except Exception as e:
