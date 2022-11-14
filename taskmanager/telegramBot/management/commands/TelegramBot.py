@@ -22,6 +22,8 @@ def CheckToken(token):
     if not token:
         return False
     if token[0].tg_id != 0:
+        token[0].token_requests_count += 1
+        token[0].save()
         return False
     return token[0]
 
