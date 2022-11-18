@@ -1,17 +1,17 @@
 import threading
-from telegramBot.models import Notify
 
 
 class Notifyer(object):
     stopLoop = True
 
-    def __init__(self, timeBetweenNotify, bot):
+    def __init__(self, timeBetweenNotify, bot, base):
         self._timeBetweenNotify = timeBetweenNotify
         self.bot = bot
+        self.myBase = base
 
     def changeTime(self, time):
         self._timeBetweenNotify = time
-
+    
     def stopLoop(self):
         self.stopLoop = False
 
@@ -19,19 +19,20 @@ class Notifyer(object):
         if not self.stopLoop:
             print("Notify ends")
             return
+        print("Notify start {}".format(self._timeBetweenNotify))
         threading.Timer(self._timeBetweenNotify, self.startNotifyLoop).start()
-        notifications = Notify.objects.filter(sended=0)
+        notifications = self.myBase.notifyGetAll()
         if not notifications:
-            print("no notifications")
+            print("not notifications")
             return
 
+        sended = []
         for n in notifications:
             try:
                 self.bot.send_message(n.tg_id, n.notify_text)
-                n.sended = 1
-                n.save()
-                print("send: {}".format(n))
+                sended.append(n.id)
             except Exception as e:
-                print("not sent: {}".format(n))
+                print("not sent: {}".format(n.id))
                 print(e)
         print("Notifications sent")
+        self.myBase.notifySended(sended)
