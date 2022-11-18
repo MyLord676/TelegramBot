@@ -7,6 +7,8 @@ import domain
 
 class mysqllib:
     def __init__(self, host, port, user, password, database):
+        if password == None:
+            password = ""
         self.engine = db.create_engine("mysql+pymysql://{}:{}@{}:{}/{}"
                                        .format(user, password,
                                                host, port, database))
