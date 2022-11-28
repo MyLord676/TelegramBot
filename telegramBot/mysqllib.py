@@ -9,11 +9,12 @@ class mysqllib:
     def __init__(self, host, port, user, password, database):
         if password == None:
             password = ""
+
         print("password:{}".format(password))
-        self.engine = db.create_engine("mysql+pymysql://telegrambotuser:Alex9429_9429Alex@"\
-				       "localhost:3306/telegrambot") #172.17.0.1:3306
-				      # .format(user, password, #host,
-                                       #        port, database))
+        self.engine = db.create_engine("mysql+pymysql://{}:{}@{}:{}/{}"
+                                       .format(user, password,
+                                               host, port, database))
+                                               
         self.meta = db.MetaData()
         print("Connected to mysql")
 
