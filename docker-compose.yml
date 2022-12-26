@@ -3,7 +3,13 @@ version: "3.9"
 services:
 
     tgbot:
-         image: "tgbot"
+         build: "./"
+         deploy:
+             replicas: 1
          restart: "no"
          network_mode: host
-
+         volumes:
+             - /home/alex/Alex/Projects/tgBot/Configs:/usr/src/tgBot/Configs
+             - /home/alex/Alex/Projects/tgBot/telegramBot:/usr/src/tgBot/telegramBot
+         logging:
+             driver: json-file

@@ -1,7 +1,7 @@
 host: localhost
 port: 3306
-user: root
-password: Alex9429
+user: telegrambotuser
+password: Alex9429_9429Alex
 database: telegrambot
 token: 5763587128:AAE9kdleVWQyJs2R1zoXuSKgxBkbD1PymGg
 max_token_request: 3
