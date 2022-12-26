@@ -10,7 +10,7 @@ import Notifyer
 
 def main():
     try:
-        with open("./Configs/Consts.yaml", "r") as yam:
+        with open("./Configs/Consts.yaml", "r") as yam: #"./Configs/Consts.yaml"
             consts = yaml.safe_load(yam)
     except Exception as e:
         print("Config 'Consts.yaml' do no read", e)
